@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PrefixPick · 前缀候选</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: #f6f7f9; color: #1d2430;
+  }
+  header { padding: 16px 24px; background: #18222f; color: #eef2f7; }
+  header h1 { margin: 0 0 8px; font-size: 18px; }
+  .stats { display: flex; flex-wrap: wrap; gap: 18px; font-size: 13px; }
+  .stats b { font-variant-numeric: tabular-nums; }
+  main { padding: 20px 24px; max-width: 1100px; margin: 0 auto; }
+  section {
+    background: #fff; border: 1px solid #dce1e8; border-radius: 10px;
+    padding: 16px 18px; margin-bottom: 18px;
+  }
+  section h2 { margin: 0 0 10px; font-size: 15px; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  input[type="search"], textarea {
+    width: 100%; padding: 8px 10px; border: 1px solid #c4ccd6;
+    border-radius: 7px; font: inherit;
+  }
+  textarea { min-height: 130px; resize: vertical; }
+  button {
+    padding: 7px 14px; border: 0; border-radius: 7px; cursor: pointer;
+    background: #2f6fed; color: #fff; font: inherit;
+  }
+  button:hover { background: #245dd1; }
+  .hint { color: #66717f; font-size: 12px; }
+  .cands { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip {
+    display: inline-flex; align-items: baseline; gap: 6px;
+    border: 1px solid #d5dbe3; border-radius: 999px; padding: 2px 10px;
+    background: #fbfcfe; max-width: 320px;
+  }
+  .chip .word {
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .chip .score { color: #2f6fed; font-variant-numeric: tabular-nums; font-size: 12px; }
+  .seq { color: #8a93a0; font-size: 12px; }
+  .qline {
+    border-top: 1px solid #ecedf0; padding: 10px 0;
+  }
+  .qline:first-of-type { border-top: 0; }
+  .qmeta { display: flex; gap: 12px; align-items: center; }
+  .qprefix {
+    font-weight: 600; min-width: 120px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .qprefix.empty { color: #8a93a0; font-weight: 400; }
+  .lat { color: #137a3d; font-variant-numeric: tabular-nums; font-size: 12px; }
+  .none { color: #98a1ad; font-size: 12px; margin-top: 6px; }
+  .err { color: #b3261e; font-size: 12px; }
+  code { background: #eef1f5; padding: 1px 5px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>PrefixPick · 前缀补全候选</h1>
+  <div class="stats" id="stats"><span class="hint">正在读取索引指标…</span></div>
+</header>
+<main>
+  <section>
+    <h2>单框补全</h2>
+    <input id="live" type="search" placeholder="输入前缀（清空 = 全局默认推荐）" autocomplete="off">
+    <div class="cands" id="live-cands"></div>
+    <div class="hint" style="margin-top:6px">
+      候选词与分数、耗时均来自 <code>GET /api/complete</code>，页面不做任何重算。
+    </div>
+  </section>
+
+  <section>
+    <h2>批量查询</h2>
+    <p class="hint">
+      每行一条，格式 <code>前缀&lt;TAB&gt;K</code>；空前缀直接以 TAB 开头。
+      可粘贴 <code>samples/queries/*.txt</code> 的内容。
+    </p>
+    <textarea id="queries" spellcheck="false"></textarea>
+    <div class="row" style="margin-top:10px">
+      <button id="run">运行全部查询</button>
+      <span class="hint" id="run-hint"></span>
+    </div>
+    <div id="results" style="margin-top:12px"></div>
+  </section>
+</main>
+
+<script type="module">
+const DEFAULT_QUERIES = [
+  "\t20", "se\t50", "se00\t10", "se4999\t3", "s\t20", "国\t20", "a\t20",
+  "q\t10", "🙂\t5", "zz\t10",
+  "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\t5",
+].join("\n");
+
+const statsEl = document.getElementById("stats");
+const liveEl = document.getElementById("live");
+const liveCandsEl = document.getElementById("live-cands");
+const queriesEl = document.getElementById("queries");
+const resultsEl = document.getElementById("results");
+const runHintEl = document.getElementById("run-hint");
+queriesEl.value = DEFAULT_QUERIES;
+
+function fmt(v, suffix) {
+  if (v === null || v === undefined) return "不可用";
+  return `${v}${suffix}`;
+}
+
+async function loadStats() {
+  try {
+    const res = await fetch("/api/stats");
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const s = await res.json();
+    const kb = s.index_bytes ? (s.index_bytes / 1024).toFixed(1) : null;
+    statsEl.innerHTML = "";
+    const items = [
+      ["词条数", fmt(s.entry_count, "")],
+      ["构建耗时", fmt(s.build_ms, " ms")],
+      ["构建峰值内存", fmt(s.build_rss_mb, " MB")],
+      ["当前进程内存", fmt(s.query_rss_mb, " MB")],
+      ["索引体积", kb === null ? "不可用" : `${kb} KB（${s.index_bytes} 字节）`],
+      ["词表 SHA-256", s.source_sha256 ? s.source_sha256.slice(0, 16) + "…" : "-"],
+    ];
+    for (const [label, value] of items) {
+      const span = document.createElement("span");
+      span.innerHTML = `${label} <b>${value}</b>`;
+      statsEl.appendChild(span);
+    }
+  } catch (err) {
+    statsEl.textContent = `索引指标不可用：${err.message}`;
+  }
+}
+
+function chip(seq, word, score) {
+  const el = document.createElement("span");
+  el.className = "chip";
+  el.title = word;
+  const s = document.createElement("span");
+  s.className = "seq";
+  s.textContent = String(seq);
+  const w = document.createElement("span");
+  w.className = "word";
+  w.textContent = word;
+  const v = document.createElement("span");
+  v.className = "score";
+  v.textContent = score;
+  el.append(s, w, v);
+  return el;
+}
+
+async function complete(prefix, k) {
+  const url = new URL("/api/complete", location.href);
+  url.searchParams.set("prefix", prefix);
+  url.searchParams.set("k", String(k));
+  const res = await fetch(url);
+  const body = await res.json();
+  if (!res.ok) throw new Error(body.error || `HTTP ${res.status}`);
+  return body;
+}
+
+function renderCandidates(container, body) {
+  container.innerHTML = "";
+  if (body.candidates.length === 0) {
+    const none = document.createElement("div");
+    none.className = "none";
+    none.textContent = "无候选";
+    container.appendChild(none);
+    return;
+  }
+  body.candidates.forEach((c, i) =>
+    container.appendChild(chip(i + 1, c.word, c.score))
+  );
+}
+
+let liveTimer = null;
+liveEl.addEventListener("input", () => {
+  clearTimeout(liveTimer);
+  liveTimer = setTimeout(async () => {
+    try {
+      const body = await complete(liveEl.value, 10);
+      renderCandidates(liveCandsEl, body);
+    } catch (err) {
+      liveCandsEl.innerHTML = `<span class="err">${err.message}</span>`;
+    }
+  }, 120);
+});
+
+function parseBatch(text) {
+  const rows = [];
+  const errors = [];
+  text.split("\n").forEach((line, idx) => {
+    const clean = line.replace(/[\r\n]+$/, "");
+    if (clean.trim() === "") return;
+    if (clean.trimStart().startsWith("#")) return;
+    const tab = clean.indexOf("\t");
+    if (tab < 0) {
+      errors.push(`第 ${idx + 1} 行缺少 TAB：${clean.slice(0, 40)}`);
+      return;
+    }
+    const prefix = clean.slice(0, tab);
+    const kRaw = clean.slice(tab + 1);
+    if (!/^\d+$/.test(kRaw) || Number(kRaw) > 1000) {
+      errors.push(`第 ${idx + 1} 行 K 非法：${kRaw}`);
+      return;
+    }
+    rows.push({ prefix, k: Number(kRaw) });
+  });
+  return { rows, errors };
+}
+
+document.getElementById("run").addEventListener("click", async () => {
+  const { rows, errors } = parseBatch(queriesEl.value);
+  resultsEl.innerHTML = "";
+  if (errors.length) {
+    runHintEl.textContent = errors.join("；");
+    runHintEl.className = "hint err";
+    return;
+  }
+  runHintEl.textContent = `共 ${rows.length} 条查询…`;
+  runHintEl.className = "hint";
+  for (const q of rows) {
+    const line = document.createElement("div");
+    line.className = "qline";
+    const meta = document.createElement("div");
+    meta.className = "qmeta";
+    const p = document.createElement("span");
+    p.className = "qprefix" + (q.prefix === "" ? " empty" : "");
+    p.textContent = q.prefix === "" ? "（空前缀）" : q.prefix;
+    p.title = q.prefix;
+    const kk = document.createElement("span");
+    kk.className = "hint";
+    kk.textContent = `K=${q.k}`;
+    const lat = document.createElement("span");
+    lat.className = "lat";
+    lat.textContent = "查询中…";
+    meta.append(p, kk, lat);
+    const cands = document.createElement("div");
+    cands.className = "cands";
+    line.append(meta, cands);
+    resultsEl.appendChild(line);
+    try {
+      const body = await complete(q.prefix, q.k);
+      lat.textContent = `耗时 ${body.elapsed_ms} ms · 返回 ${body.candidates.length} 条`;
+      renderCandidates(cands, body);
+    } catch (err) {
+      lat.textContent = "";
+      cands.innerHTML = `<span class="err">${err.message}</span>`;
+    }
+  }
+  runHintEl.textContent = `完成：${rows.length} 条查询`;
+});
+
+loadStats();
+window.dispatchEvent(new Event("input"));
+liveEl.dispatchEvent(new Event("input"));
+</script>
+</body>
+</html>

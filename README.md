@@ -100,10 +100,105 @@
 
 `samples/notes.md` 是现场记录，`samples/expected-latency.txt` 是延迟与内存的验收口径。
 
-## 七、待补的文档
+## 七、实现说明
 
-- 索引的字节布局、单文件还是多目录。
-- `bench` 的计时起点：是否含首次查询、是否含加载与预热。
-- HTTP 的并发模型、超时设置与错误文案。
-- 页面的交互细节：防抖、键盘操作、高亮、空结果与超长词截断展示。
-- 索引版本升级、多词表切换与在线重建方案。
+以下为本次实现的固定口径，对应原「待补的文档」各项。
+
+### 代码布局
+
+- `cli.py`：命令行入口（`build` / `query` / `bench` / `serve`）。
+- `engine/scoring.py`：分数公式、两位小数字符串格式化（纯整数）。
+- `engine/wordsio.py`：词表与查询清单解析、非法行报错（文件:行号）。
+- `engine/index.py`：索引构建、落盘、只读查询。
+- `engine/server.py`：标准库 `ThreadingHTTPServer` 实现的 HTTP 接口与静态托管。
+- `web/index.html`：原生 ES module 单页，无构建、无 CDN。
+- `tests/test_engine.py`：`unittest` 测试，含全部样例的逐字节 CLI 回归。
+- `var/`：索引与本地产物目录，已在 `.gitignore` 中。
+
+### 索引字节布局
+
+索引目录包含四个相对路径文件，目录可整体复制搬移，不依赖词表与绝对路径：
+
+- `manifest.json`：UTF-8 JSON，必含 `version`（=1）、`entry_count`、
+  `source_sha256`；另附 `build_ms`、`build_rss_mb`、`index_bytes`、
+  `word_bytes`、`index_format`。该文件最后原子落盘，存在即代表索引可用。
+- `words.bin`：8 字节魔数 `PPIXWRD1`，随后按码点序拼接的全部词 UTF-8 字节，
+  不重复存储词表之外的任何字符串。
+- `index.bin`：8 字节魔数 `PPIXIDX1`，随后每条词一条 24 字节定长记录
+  （小端）：`S100 uint64`、`词字节偏移 uint32`、`频率 uint32`、
+  `权重 uint32`、`UTF-8 字节数 uint16`、`码点数 uint16`，顺序与词码点序一致。
+- `top.bin`：8 字节魔数 `PPIXTOP1`、条目数 `uint32`，随后是构建期算好的
+  全局前 1000 名下标（`uint32`，按全序排名降序），供空前缀直接取用。
+
+内存中不展开任何前缀表/trie：驻留内容只有全部词文本与每条 24 字节记录，
+十万条约 3.4 MB（词文本）+ 2.4 MB（记录），远低于 512 MB 上限。
+
+### 查询算法与复杂度
+
+- 非空前缀：在码点序词表上用 `bisect` 做两次二分，得到候选区间
+  `[lo, hi)`，定位代价 O(log n)；区间内用容量 K 的最小堆（`heapq.nlargest`
+  的全序键 `(S100, 频率, -L, 词反向序)`）一次扫描取前 K，
+  代价 O(m log K)，m 为命中数；任何情况下都不遍历整份词表。
+- 空前缀：直接返回 `top.bin` 的前 K，O(K)，构建期预算、查询零扫描。
+- 区间上界由「前缀末位码点 +1」构造；当前缀为理论最大串时上界取无穷。
+
+### 构建原子性
+
+目标目录不存在时：在同级临时目录写全部数据文件（每个文件先写
+`*.tmp-<pid>` 再 `os.replace`），最后用 `os.replace` 整体替换目录，
+再原子写入 `manifest.json`。目标目录已存在时：数据文件逐个原地原子替换，
+清理由清单驱动，`manifest.json` 仍最后写入。构建非法则退出码 1，
+且目标位置不会出现可用索引（无 `manifest.json`）。
+
+### bench 计时口径
+
+- 索引在计时前完成加载；首轮查询作为预热（每条跑一次），**不计入**统计。
+- 计时只包裹 `IndexReader.complete()` 本身；同一条查询的 R 次重复各自计时，
+  先在每条查询内部排序算 p50/p95/p99（线性插值），再对不同查询取最大值，
+  与「每条查询分别统计后取分位，不把不同查询混在一起」的口径一致。
+- `rss_mb` 取进程 `ru_maxrss`（Linux 下 KB/1024）。
+
+### HTTP 并发、超时与错误
+
+- `ThreadingHTTPServer`，监听 `127.0.0.1`，HTTP/1.1，keep-alive，
+  socket 超时 10 秒；单并发验收口径下请求各自独立线程处理。
+- `GET /api/complete?prefix=<前缀>&k=<K>`：`k` 缺省 10，仅接受
+  `0..1000` 的十进制整数；`prefix` 可空、不得含空白字符、码点数 ≤ 4096。
+  非法参数返回 `400 {"error": "…"}`。
+- 响应固定 `application/json; charset=utf-8`，分数为与 CLI 完全一致的
+  两位小数字符串；响应额外含 `elapsed_ms`（引擎查询耗时，毫秒）。
+- 另提供 `GET /api/stats`：返回词条数、`source_sha256`、构建耗时
+  `build_ms`、构建峰值内存 `build_rss_mb`、索引字节数 `index_bytes`
+  与当前进程 RSS `query_rss_mb`，全部来自构建/运行期实测，页面不重算。
+
+### 页面交互
+
+- 顶部指标条渲染 `/api/stats`：词条数、构建耗时、构建峰值内存、
+  当前进程内存、索引体积。
+- 「单框补全」输入即查，120 ms 防抖，清空时请求空前缀（=默认推荐）。
+- 「批量查询」每行 `前缀<TAB>K`，空前缀以 TAB 开头，可直接粘贴查询清单；
+  每行显示返回条数与该次 `elapsed_ms`，候选按接口返回顺序展示，
+  分数文本直接渲染，页面不计算任何分数。
+- 无候选显示「无候选」；超长词在 chip 内 CSS 截断，悬停 title 显示全文。
+- 页面无键盘导航、无高亮（README 已声明不在验收范围）。
+
+### 版本与演进
+
+- 当前索引 `version = 1`；`manifest.json` 版本不匹配或文件缺失时，
+  载入报错并以退出码 2 退出。
+- 本期不做索引格式迁移、多词表共存与在线重建；换词表请向新目录
+  `build`，校验成功后再切换 `serve --index` 指向。
+
+### 运行与测试
+
+```
+python3 cli.py build --words samples/words/big.txt --index var/index-big
+python3 cli.py query --index var/index-big --queries samples/queries/big.txt
+python3 cli.py bench --index var/index-big --queries samples/queries/big.txt --repeat 200
+python3 cli.py serve --index var/index-big --port 8000
+python3 -m unittest discover -s tests -v
+```
+
+实测（本机，十万词）：构建约 0.1 s（含落盘），索引约 3.57 MB（词表 1.74 MB，
+小于 3 倍上限），查询进程 RSS 约 31 MB；热查询 p95 ≈ 2.4 ms，
+回环接口 p95 ≈ 3.2 ms，冷启动整进程约 0.05 s，全部留有充分余量。
