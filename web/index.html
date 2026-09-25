@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>前缀补全 · 结果查看</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; margin: 0; padding: 1rem 2rem; }
+  header#stats { display: flex; gap: 2rem; padding: .6rem 1rem; border: 1px solid #8884;
+                 border-radius: 8px; margin-bottom: 1rem; font-size: .95rem; }
+  header#stats b { font-weight: 600; margin-right: .4rem; }
+  form { display: flex; gap: .5rem; margin-bottom: 1rem; }
+  input, button { font: inherit; padding: .35rem .6rem; }
+  #prefix { width: 24rem; }
+  #k { width: 6rem; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border-bottom: 1px solid #8883; padding: .35rem .6rem; text-align: left;
+           vertical-align: top; }
+  td.prefix { font-family: ui-monospace, monospace; white-space: nowrap; }
+  td.meta { white-space: nowrap; color: #777; font-size: .9rem; }
+  .cand { display: inline-block; margin: 0 .4rem .3rem 0; padding: .15rem .5rem;
+          border: 1px solid #8885; border-radius: 6px; font-family: ui-monospace, monospace; }
+  .cand .score { color: #777; margin-left: .4rem; font-size: .85em; }
+  .empty { color: #a00; }
+  #error { color: #a00; margin: .5rem 0; }
+</style>
+</head>
+<body>
+<h1>前缀补全 · 结果查看</h1>
+<header id="stats">索引信息加载中…</header>
+<form id="query-form">
+  <input id="prefix" type="text" placeholder="前缀（留空 = 全局推荐）" autocomplete="off">
+  <input id="k" type="number" min="0" max="1000" value="10" title="候选个数 K">
+  <button type="submit">查询</button>
+</form>
+<div id="error"></div>
+<table>
+  <thead><tr><th>前缀</th><th>K</th><th>耗时</th><th>候选（按分数排序）</th></tr></thead>
+  <tbody id="rows"></tbody>
+</table>
+<script type="module">
+const statsEl = document.getElementById('stats');
+const rowsEl = document.getElementById('rows');
+const errorEl = document.getElementById('error');
+
+// 顶部指标：构建耗时与内存直接来自引擎落盘的 manifest（/api/stats）
+try {
+  const stats = await (await fetch('/api/stats')).json();
+  statsEl.innerHTML = '';
+  const items = [
+    ['索引构建耗时', `${stats.build_seconds} s`],
+    ['构建峰值内存', `${stats.build_rss_mb} MB`],
+    ['词条数', String(stats.entry_count)],
+    ['索引版本', String(stats.version)],
+  ];
+  for (const [label, value] of items) {
+    const span = document.createElement('span');
+    const b = document.createElement('b');
+    b.textContent = label;
+    span.append(b, document.createTextNode(value));
+    statsEl.append(span);
+  }
+} catch {
+  statsEl.textContent = '索引信息加载失败';
+}
+
+// 每个查询一行：候选与分数、耗时均来自 /api/complete 的引擎输出，页面不重算
+document.getElementById('query-form').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  errorEl.textContent = '';
+  const prefix = document.getElementById('prefix').value;
+  const k = document.getElementById('k').value || '10';
+  const resp = await fetch(`/api/complete?prefix=${encodeURIComponent(prefix)}&k=${encodeURIComponent(k)}`);
+  const data = await resp.json();
+  if (!resp.ok) {
+    errorEl.textContent = `查询失败：${data.error ?? resp.status}`;
+    return;
+  }
+  const tr = document.createElement('tr');
+  const tdPrefix = document.createElement('td');
+  tdPrefix.className = 'prefix';
+  tdPrefix.textContent = data.prefix === '' ? '（空）' : data.prefix;
+  const tdK = document.createElement('td');
+  tdK.className = 'meta';
+  tdK.textContent = String(data.k);
+  const tdTime = document.createElement('td');
+  tdTime.className = 'meta';
+  tdTime.textContent = `${data.elapsed_ms} ms`;
+  const tdCand = document.createElement('td');
+  if (data.candidates.length === 0) {
+    const span = document.createElement('span');
+    span.className = 'empty';
+    span.textContent = '无候选';
+    tdCand.append(span);
+  } else {
+    for (const c of data.candidates) {
+      const chip = document.createElement('span');
+      chip.className = 'cand';
+      chip.append(document.createTextNode(c.word));
+      const score = document.createElement('span');
+      score.className = 'score';
+      score.textContent = c.score;
+      chip.append(score);
+      tdCand.append(chip);
+    }
+  }
+  tr.append(tdPrefix, tdK, tdTime, tdCand);
+  rowsEl.prepend(tr);
+});
+</script>
+</body>
+</html>
