@@ -1,0 +1,10 @@
+# 词表: samples/words/dense.txt
+d	5
+d0	3
+da	5
+dat	5
+data	10
+data0	10
+data05	10
+data9	5
+e	5

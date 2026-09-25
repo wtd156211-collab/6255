@@ -1,0 +1,12 @@
+# 词表: samples/words/big.txt
+	20
+se	50
+se00	10
+se4999	3
+s	20
+国	20
+a	20
+q	10
+🙂	5
+zz	10
+zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz	5

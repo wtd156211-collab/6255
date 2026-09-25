@@ -1,0 +1,4 @@
+# 词表: samples/words/basic.txt
+# 第二行 K 非法：整个查询文件必须先校验完再执行，stdout 必须为空，退出码 1
+app	3
+apple	x

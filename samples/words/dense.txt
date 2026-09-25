@@ -1,0 +1,800 @@
+d050	6	3
+data0287	8
+d146	3
+data0278	10
+data0531	13
+data0402	7
+data0566	11
+data0034	5
+data0516	12	2
+data0481	1
+data0535	2
+data0585	1
+data0044	10	2
+data0020	11	2
+data0220	7	2
+d070	8	3
+data0040	8	2
+data0095	3
+data0323	13
+data0248	8	2
+d110	3	3
+data0592	11	2
+data0392	2	2
+data0233	7
+d131	6
+d176	6
+d177	7
+data0365	8
+data0263	9
+data0480	7	2
+data0153	6
+data0312	1	2
+data0110	4
+data0493	7
+data0299	1
+data0102	13
+data0470	2
+d064	2
+data0238	3
+data0399	12
+data0435	4
+data0321	12
+d000	1	3
+data0172	9	2
+data0573	8
+d041	6
+d122	6
+data0134	3
+data0455	1
+data0379	2
+d042	7
+data0302	9
+data0430	8
+d134	9
+d124	8
+data0552	4	2
+data0068	9	2
+d037	2
+data0092	8	2
+data0594	12
+d062	9
+data0582	6
+data0222	8
+data0277	3
+data0100	12	2
+d055	2	3
+data0166	6
+data0361	6
+data0176	11	2
+data0319	11
+data0484	9	2
+data0116	7	2
+d067	5
+d004	5
+data0522	2
+data0340	2	2
+data0527	11
+data0510	9
+data0401	13
+data0082	3
+data0486	10
+data0193	13
+data0178	12
+data0164	5	2
+data0181	7
+data0078	1
+data0073	5
+data0357	4
+data0129	7
+data0226	10
+data0083	10
+data0130	1
+data0491	6
+data0386	12
+d007	8
+data0041	2
+data0597	7
+data0492	13	2
+data0244	6	2
+d084	4
+d031	5
+data0210	2
+data0488	11	2
+data0479	13
+d193	5
+data0419	9
+d093	4
+data0438	12
+d013	5
+d088	8
+d120	4	3
+data0205	6
+data0347	12
+data0012	7	2
+data0006	4
+data0208	1	2
+data0334	12
+data0537	3
+data0036	6	2
+data0241	11
+d151	8
+data0506	7
+data0062	6
+data0374	6
+data0227	4
+data0307	5
+data0315	9
+data0353	2
+data0383	4
+data0343	10
+data0128	13	2
+d162	1
+data0546	1
+data0469	8
+d071	9
+data0089	13
+data0335	6
+d046	2
+data0077	7
+data0279	4
+data0482	8
+d106	8
+data0125	5
+data0508	8	2
+data0093	2
+data0474	4
+data0237	9
+data0231	6
+d075	4	3
+d189	1
+d140	6	3
+data0105	8
+d145	2	3
+d144	1
+data0032	4	2
+d102	4
+data0201	4
+data0099	5
+data0143	1
+data0087	12
+data0551	10
+data0410	11
+data0444	2	2
+d160	8	3
+d078	7
+data0329	3
+d172	2
+data0264	3	2
+data0009	12
+data0194	7
+data0276	9	2
+data0577	10
+d073	2
+d052	8
+data0505	13
+data0219	13
+data0364	1	2
+data0155	7
+data0266	4
+data0030	3
+data0064	7	2
+data0177	5
+data0133	9
+data0331	4
+data0440	13	2
+data0412	12	2
+d167	6
+data0375	13
+data0564	10	2
+d020	3	3
+d187	8
+data0088	6	2
+data0300	8	2
+data0246	7
+data0559	1
+data0204	12	2
+d161	9
+d090	1	3
+data0152	12	2
+data0169	1
+data0170	8
+data0056	3	2
+data0581	12
+data0330	10
+data0291	10
+d045	1	3
+data0002	2
+data0333	5
+data0011	13
+d014	6
+data0557	13
+data0529	12
+data0119	2
+d183	4
+data0251	3
+d011	3
+data0175	4
+data0397	11
+data0079	8
+d049	5
+data0445	9
+d092	3
+data0072	11	2
+d155	3	3
+data0498	3
+data0414	13
+d003	4
+data0356	10	2
+data0569	6
+d113	6
+data0453	13
+d147	4
+data0467	7
+data0199	3
+d174	4
+data0126	12
+d116	9
+data0370	4
+data0187	10
+data0035	12
+data0398	5
+data0439	6
+d008	9
+data0400	6	2
+data0055	9
+d188	9
+data0080	2	2
+d035	9	3
+data0142	7
+d015	7	3
+data0053	8
+data0050	13
+d040	5	3
+data0447	10
+data0403	1
+data0538	10
+data0182	1
+data0029	9
+d197	9
+data0543	6
+d105	7	3
+d100	2	3
+d056	3
+data0528	5	2
+d053	9
+d097	8
+data0387	6
+data0487	4
+data0332	11	2
+data0179	6
+data0382	10
+d190	2	3
+d076	5
+data0550	3
+data0443	8
+data0424	5	2
+data0429	1
+data0326	8
+data0311	7
+data0328	9	2
+data0112	5	2
+d054	1
+data0165	12
+data0591	4
+data0028	2	2
+data0103	7
+data0265	10
+data0341	9
+d185	6	3
+d150	7	3
+d012	4
+d087	7
+data0426	6
+d107	9
+d164	3
+d072	1
+d077	6
+data0019	4
+data0063	13
+d103	5
+data0156	1	2
+data0184	2	2
+d063	1
+data0416	1	2
+d195	7	3
+data0084	4	2
+d175	5	3
+data0598	1
+data0473	10
+data0336	13	2
+data0519	7
+data0046	11
+data0524	3	2
+data0236	2	2
+data0589	3
+data0475	11
+data0517	6
+data0563	3
+data0145	2
+data0109	10
+data0195	1
+data0213	10
+data0283	6
+data0043	3
+d018	1
+d118	2
+data0189	11
+data0325	1
+d085	5	3
+d086	6
+d138	4
+data0496	2	2
+data0254	11
+data0121	3
+data0120	9	2
+data0218	6
+data0289	9
+data0185	9
+data0520	1	2
+data0045	4
+data0366	2
+data0104	1	2
+data0197	2
+data0024	13	2
+data0536	9	2
+data0558	7
+data0135	10
+data0023	6
+data0196	8	2
+data0314	2
+d126	1
+data0076	13	2
+d019	2
+data0413	6
+data0301	2
+d059	6
+data0065	1
+data0411	5
+data0017	3
+data0572	1	2
+data0590	10
+data0540	11	2
+data0468	1	2
+d191	3
+data0285	7
+data0371	11
+data0007	11
+data0272	7	2
+data0042	9
+d139	5
+data0502	5
+data0390	1
+d057	4
+data0338	1
+d149	6
+data0533	1
+data0452	6	2
+data0388	13	2
+data0149	4
+data0245	13
+data0463	5
+data0192	6	2
+data0436	11	2
+data0362	13
+d141	7
+data0441	7
+data0497	9
+d002	3
+data0408	10	2
+d082	2
+data0229	5
+data0561	2
+data0327	2
+data0262	2
+data0275	2
+data0157	8
+data0228	11	2
+data0171	2
+data0359	5
+d180	1	3
+data0512	10	2
+data0232	13	2
+d058	5
+d051	7
+d133	8
+d111	4
+data0575	9
+d069	7
+data0420	3	2
+data0061	12
+data0425	12
+d094	5
+data0198	9
+d154	2
+data0085	11
+data0270	6
+data0372	5	2
+d127	2
+d044	9
+data0217	12
+d029	3
+data0446	3
+data0409	4
+data0456	8	2
+d108	1
+data0158	2
+d121	5
+data0101	6
+d039	4
+data0127	6
+d153	1
+data0579	11
+d178	8
+data0039	1
+data0346	5
+data0267	11
+d194	6
+data0113	12
+d171	1
+d098	9
+data0132	2	2
+data0437	5
+d016	8
+d186	7
+d096	7
+data0148	10	2
+d163	2
+data0280	11	2
+data0067	2
+data0394	3
+data0259	7
+data0393	9
+data0294	5
+data0144	8	2
+d061	8
+data0360	12	2
+data0465	6
+data0269	12
+data0553	11
+data0515	5
+data0433	3
+data0268	5	2
+data0476	5	2
+data0310	13
+data0405	2
+data0525	10
+data0059	11
+d065	3	3
+data0418	2
+data0355	3
+data0286	1
+data0057	10
+data0260	1	2
+data0221	1
+data0423	11
+data0378	8
+data0384	11	2
+data0295	12
+d152	9
+data0565	4
+data0247	1
+data0163	11
+d136	2
+d168	7
+data0186	3
+data0395	10
+data0541	5
+d158	6
+data0293	11
+data0200	10	2
+data0005	10
+data0206	13
+d137	3
+d142	8
+data0376	7	2
+data0421	10
+d112	5
+data0014	8
+data0003	9
+d173	3
+data0313	8
+data0489	5
+data0460	10	2
+data0545	7
+data0215	11
+data0297	13
+data0369	10
+d166	5
+data0454	7
+data0261	8
+d129	4
+data0389	7
+data0252	10	2
+data0322	6
+data0016	9	2
+data0094	9
+d119	3
+d027	1
+data0098	11
+d028	2
+data0471	9
+d060	7	3
+data0339	8
+data0511	3
+data0549	9
+d159	7
+data0211	9
+data0342	3
+data0026	1
+d182	3
+d181	2
+data0396	4	2
+d025	8	3
+data0431	2
+data0124	11	2
+data0466	13
+data0137	11
+data0010	6
+d074	3
+data0008	5	2
+d081	1
+data0159	9
+d123	7
+data0243	12
+data0188	4	2
+data0513	4
+data0097	4
+data0504	6	2
+data0349	13
+data0258	13
+data0494	1
+d095	6	3
+data0350	7
+data0428	7	2
+data0363	7
+data0000	1	2
+data0296	6	2
+data0052	1	2
+d199	2
+data0595	6
+data0281	5
+data0071	4
+data0304	10	2
+data0316	3	2
+d038	3
+data0131	8
+d033	7
+data0168	7	2
+data0523	9
+data0584	7	2
+data0250	9
+data0235	8
+data0225	3
+data0472	3	2
+data0202	11
+data0500	4	2
+data0518	13
+d043	8
+d117	1
+data0499	10
+data0354	9
+data0033	11
+data0358	11
+data0146	9
+data0548	2	2
+d034	8
+data0147	3
+data0348	6	2
+data0292	4	2
+d021	4
+data0554	5
+data0075	6
+d130	5	3
+data0282	12
+data0485	3
+data0583	13
+data0562	9
+data0004	3	2
+data0305	4
+d079	8
+data0367	9
+data0501	11
+data0074	12
+data0451	12
+data0580	5	2
+data0530	6
+data0574	2
+d083	3
+d169	8
+data0457	2
+data0381	3
+data0490	12
+data0048	12	2
+data0015	2
+data0539	4
+d179	9
+data0345	11
+data0190	5
+d125	9	3
+d017	9
+data0253	4
+data0483	2
+data0534	8
+d165	4	3
+data0593	5
+data0290	3
+d156	4
+data0255	5
+data0022	12
+data0571	7
+data0140	6	2
+data0106	2
+data0576	3	2
+data0240	4	2
+data0257	6
+data0239	10
+d170	9	3
+data0123	4
+d005	6	3
+d048	4
+data0203	5
+data0450	5
+data0117	1
+d080	9	3
+data0309	6
+data0161	10
+d030	4	3
+data0318	4
+data0216	5	2
+data0051	7
+data0086	5
+data0122	10
+d109	2
+d184	5
+data0274	8
+data0207	7
+data0521	8
+data0256	12	2
+data0069	3
+data0588	9	2
+data0224	9	2
+data0448	4	2
+data0556	6	2
+data0464	12	2
+data0417	8
+d132	7
+d026	9
+data0427	13
+d066	4
+data0542	12
+data0596	13	2
+data0212	3	2
+data0308	12	2
+data0167	13
+data0351	1
+data0432	9	2
+data0139	12
+data0320	5	2
+data0111	11
+data0223	2
+data0599	8
+d128	3
+data0214	4
+data0477	12
+d006	7
+data0118	8
+d157	5
+data0018	10
+data0578	4
+d099	1
+d101	3
+data0209	8
+data0555	12
+data0107	9
+data0459	3
+data0380	9	2
+d089	9
+data0162	4
+data0434	10
+data0021	5
+data0070	10
+data0136	4	2
+data0509	2
+data0544	13	2
+d091	2
+d198	1
+d010	2	3
+d022	5
+data0249	2
+data0324	7	2
+d114	7
+data0234	1
+data0532	7	2
+data0503	12
+d047	3
+data0442	1
+data0306	11
+data0422	4
+data0027	8
+data0151	5
+data0407	3
+data0154	13
+data0478	6
+data0385	5
+data0060	5	2
+data0174	10
+data0284	13	2
+data0058	4
+d196	8
+data0458	9
+data0114	6
+data0406	9
+d023	6
+data0180	13	2
+data0096	10	2
+data0183	8
+data0173	3
+data0317	10
+data0568	12	2
+data0054	2
+data0462	11
+data0242	5
+data0273	1
+data0449	11
+data0547	8
+data0391	8
+data0271	13
+data0404	8	2
+data0495	8
+data0337	7
+data0090	7
+data0461	4
+data0138	5
+data0108	3	2
+data0352	8	2
+d135	1	3
+data0377	1
+data0507	1
+data0013	1
+data0298	7
+data0344	4	2
+data0230	12
+data0560	8	2
+data0115	13
+data0373	12
+d068	6
+data0031	10
+data0047	5
+d143	9
+data0081	9
+data0191	12
+data0526	4
+d001	2
+data0150	11
+data0570	13
+data0514	11
+data0001	8
+data0368	3	2
+data0037	13
+data0567	5
+d192	4
+data0288	2	2
+d024	7
+d009	1
+data0586	8
+data0066	8
+data0049	6
+data0025	7
+data0141	13
+data0160	3	2
+d148	5
+d036	1
+d032	6
+data0091	1
+d104	6
+d115	8	3
+data0415	7
+data0303	3
+data0038	7
+data0587	2

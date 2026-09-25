@@ -1,0 +1,6 @@
+# 词表: samples/words/equal-freq.txt
+t	10
+t	35
+t0	5
+t030	2
+p	5

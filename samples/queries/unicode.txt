@@ -1,0 +1,13 @@
+# 词表: samples/words/unicode.txt
+app	5
+A	5
+App	2
+APP	2
+a	5
+ａ	3
+caf	5
+CAF	3
+str	5
+🙂	5
+Ω	3
+上海	3

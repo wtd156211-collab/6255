@@ -1,0 +1,7 @@
+# 词表: samples/words/ranking.txt
+tie	2
+tie-a	1
+same	2
+podium	3
+w	5
+q	2

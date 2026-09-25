@@ -1,0 +1,12 @@
+# 词表: samples/words/basic.txt
+app	3
+apple	5
+appl	10
+band	3
+ban	0
+a	100
+海	4
+上	2
+上海	8
+zzz	5
+	3
